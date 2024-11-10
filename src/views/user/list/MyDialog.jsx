@@ -6,6 +6,8 @@ function MyDialog() {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
 
+  console.log('hello')
+
   const handleClickOpen = () => {
     setOpen(true)
   }
