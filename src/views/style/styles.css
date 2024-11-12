@@ -1,0 +1,35 @@
+.filter-dropdown {
+  position: absolute;
+  bottom: 290px;
+  /* left: 0; */
+  background: #fff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 10px 0;
+  border-radius: 8px;
+  z-index: 1000;
+  width: 180px;
+  margin-left: 4rem;
+}
+
+.filter-field {
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-field label {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.filter-field option[type='checkbox'] {
+  accent-color: #007aff; /* Customize checkbox color */
+  transform: scale(1.2); /* Scale checkbox size */
+}
+
+/* Hover effect */
+.filter-field:hover {
+  background-color: #666cff29;
+  cursor: pointer;
+}
