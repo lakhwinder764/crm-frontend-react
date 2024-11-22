@@ -65,7 +65,7 @@ const VerticalMenu = ({ scrollMenu }) => {
         </MenuItem>
         <SubMenu label='Settings' icon={<i class='ri-settings-2-line'></i>}>
           <MenuItem href='/settings/workflow/list' icon={<i className='ri-information-line' />}>
-            WorkkFlow
+            WorkFlow
           </MenuItem>
         </SubMenu>
       </Menu>

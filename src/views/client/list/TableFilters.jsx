@@ -121,91 +121,9 @@ const TableFilters = ({ setData, tableData, globalFilter, setGlobalFilter, type 
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search User'
+              placeholder='Search Client'
               className='max-sm:is-full'
             />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl
-            fullWidth
-            sx={{
-              '& .MuiInputBase-root': {
-                height: '40px',
-                minHeight: 'auto'
-              },
-              '& .MuiInputLabel-root': {
-                top: '-7px'
-              }
-            }}
-          >
-            <InputLabel id='type-select'>Filter by type</InputLabel>
-            <Select
-              fullWidth
-              size='small'
-              id='select-type'
-              label='Filter by type'
-              labelId='type-select'
-              value={types}
-              multiple
-              onChange={handleTypeChange}
-              renderValue={selected => selected?.join(', ')}
-
-              // inputProps={{ placeholder: 'Filter by type' }}
-            >
-              <MenuItem key='evaluated' value='evaluated'>
-                <Checkbox checked={types?.indexOf('evaluated') > -1} />
-                <ListItemText primary='Evaluated' /> {/* Capitalize first letter */}
-              </MenuItem>
-              <MenuItem key='practice' value='practice'>
-                <Checkbox checked={types?.indexOf('practice') > -1} />
-                <ListItemText primary='Practice' /> {/* Capitalize first letter */}
-              </MenuItem>
-              <MenuItem key='quiz' value='quiz'>
-                <Checkbox checked={types?.indexOf('quiz') > -1} />
-                <ListItemText primary='Quiz' /> {/* Capitalize first letter */}
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl
-            fullWidth
-            sx={{
-              '& .MuiInputBase-root': {
-                height: '40px',
-                minHeight: 'auto'
-              },
-              '& .MuiInputLabel-root': {
-                top: '-7px'
-              }
-            }}
-          >
-            <InputLabel id='status-select'>Filter by status</InputLabel>
-            <Select
-              fullWidth
-              id='select-status'
-              label='Filter by status'
-              size='small'
-              value={status}
-              labelId='status-select'
-              multiple
-              onChange={handleStatusChange}
-              renderValue={selected => selected?.join(', ')}
-
-              // inputProps={{ placeholder: 'Select Status' }}
-            >
-              <MenuItem key='Published' value='Published'>
-                <Checkbox checked={status?.indexOf('Published') > -1} />
-                <ListItemText primary='Published' /> {/* Capitalize first letter */}
-              </MenuItem>
-              {/* <MenuItem value='Published'>Published</MenuItem> */}
-              <MenuItem key='Unpublished' value='Unpublished'>
-                <Checkbox checked={status?.indexOf('Unpublished') > -1} />
-                <ListItemText primary='Unpublished' /> {/* Capitalize first letter */}
-              </MenuItem>
-              {/* <MenuItem value='Unpublished'>Unpublished</MenuItem> */}
-            </Select>
           </FormControl>
         </Grid>
       </Grid>

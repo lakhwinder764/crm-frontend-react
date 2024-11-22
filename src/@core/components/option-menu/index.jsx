@@ -34,7 +34,7 @@ const IconButtonWrapper = props => {
 const MenuItemWrapper = ({ children, option }) => {
   if (option.href) {
     return (
-      <Box component={Link} href={option.href} {...option.linkProps} display='flex' alignItems='center'>
+      <Box component={Link} href={option.href} display='flex' alignItems='center' flexGrow={1}>
         {children}
       </Box>
     )
@@ -78,7 +78,7 @@ const OptionMenu = props => {
       <Popper
         open={open}
         anchorEl={anchorRef.current}
-        placement={leftAlignMenu ? 'bottom-start' : 'bottom-end'}
+        placement='right-end'
         transition
         disablePortal
         sx={{ zIndex: 1 }}

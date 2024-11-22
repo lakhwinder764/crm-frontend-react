@@ -16,23 +16,12 @@ const TableFilters = ({ setData, tableData, globalFilter, setGlobalFilter, type 
   const [types, setTypes] = useState([])
   const [status, setStatus] = useState([])
 
+  console.info(globalFilter)
   useEffect(() => {
-    const filteredData = tableData?.filter(user => {
-      if (user?.status === '0' && status?.length) {
-        if (status?.length && !status?.includes('Unpublished')) return false
-      }
-
-      if (user?.status === '1' && status?.length) {
-        if (status?.length && !status?.includes('Published')) return false
-      }
-
-      if (types?.length > 0 && !types?.includes(user?.type)) return false
-
-      return true
-    })
+    const filteredData = tableData?.filter(user => user.title.toLowerCase().includes(globalFilter.toLowerCase()))
 
     setData(filteredData || [])
-  }, [type, status, tableData, setData, types])
+  }, [type, status, tableData, setData, types, globalFilter])
 
   const DebouncedInput = ({ value: initialValue, onChange, debounce = 500, ...props }) => {
     // States
@@ -70,22 +59,6 @@ const TableFilters = ({ setData, tableData, globalFilter, setGlobalFilter, type 
     )
   }
 
-  const handleTypeChange = event => {
-    const {
-      target: { value }
-    } = event
-
-    setTypes(typeof value === 'string' ? value?.split(',') : value)
-  }
-
-  const handleStatusChange = event => {
-    const {
-      target: { value }
-    } = event
-
-    setStatus(typeof value === 'string' ? value?.split(',') : value)
-  }
-
   return (
     <CardContent>
       <Grid container spacing={5} xs={12} display='flex' alignItems='center' pr={0}>
@@ -121,91 +94,9 @@ const TableFilters = ({ setData, tableData, globalFilter, setGlobalFilter, type 
             <DebouncedInput
               value={globalFilter ?? ''}
               onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search User'
+              placeholder='Search Partner'
               className='max-sm:is-full'
             />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl
-            fullWidth
-            sx={{
-              '& .MuiInputBase-root': {
-                height: '40px',
-                minHeight: 'auto'
-              },
-              '& .MuiInputLabel-root': {
-                top: '-7px'
-              }
-            }}
-          >
-            <InputLabel id='type-select'>Filter by type</InputLabel>
-            <Select
-              fullWidth
-              size='small'
-              id='select-type'
-              label='Filter by type'
-              labelId='type-select'
-              value={types}
-              multiple
-              onChange={handleTypeChange}
-              renderValue={selected => selected?.join(', ')}
-
-              // inputProps={{ placeholder: 'Filter by type' }}
-            >
-              <MenuItem key='evaluated' value='evaluated'>
-                <Checkbox checked={types?.indexOf('evaluated') > -1} />
-                <ListItemText primary='Evaluated' /> {/* Capitalize first letter */}
-              </MenuItem>
-              <MenuItem key='practice' value='practice'>
-                <Checkbox checked={types?.indexOf('practice') > -1} />
-                <ListItemText primary='Practice' /> {/* Capitalize first letter */}
-              </MenuItem>
-              <MenuItem key='quiz' value='quiz'>
-                <Checkbox checked={types?.indexOf('quiz') > -1} />
-                <ListItemText primary='Quiz' /> {/* Capitalize first letter */}
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <FormControl
-            fullWidth
-            sx={{
-              '& .MuiInputBase-root': {
-                height: '40px',
-                minHeight: 'auto'
-              },
-              '& .MuiInputLabel-root': {
-                top: '-7px'
-              }
-            }}
-          >
-            <InputLabel id='status-select'>Filter by status</InputLabel>
-            <Select
-              fullWidth
-              id='select-status'
-              label='Filter by status'
-              size='small'
-              value={status}
-              labelId='status-select'
-              multiple
-              onChange={handleStatusChange}
-              renderValue={selected => selected?.join(', ')}
-
-              // inputProps={{ placeholder: 'Select Status' }}
-            >
-              <MenuItem key='Published' value='Published'>
-                <Checkbox checked={status?.indexOf('Published') > -1} />
-                <ListItemText primary='Published' /> {/* Capitalize first letter */}
-              </MenuItem>
-              {/* <MenuItem value='Published'>Published</MenuItem> */}
-              <MenuItem key='Unpublished' value='Unpublished'>
-                <Checkbox checked={status?.indexOf('Unpublished') > -1} />
-                <ListItemText primary='Unpublished' /> {/* Capitalize first letter */}
-              </MenuItem>
-              {/* <MenuItem value='Unpublished'>Unpublished</MenuItem> */}
-            </Select>
           </FormControl>
         </Grid>
       </Grid>

@@ -71,7 +71,7 @@ const AddEditWorkFlow = () => {
       <Card>
         <CardContent>
           <Grid container xs={12}>
-            <Grid item xs={12}>
+            <Grid item xs={12} py={2}>
               <Typography fontWeight='bold'>
                 Workflow Name <span style={{ color: theme?.palette?.error?.main }}>*</span>
               </Typography>
@@ -87,7 +87,7 @@ const AddEditWorkFlow = () => {
                 margin='normal'
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} py={2}>
               <FormControl
                 component='fieldset'
                 error={formik.touched.radioButton && Boolean(formik.errors.radioButton)}
@@ -112,7 +112,7 @@ const AddEditWorkFlow = () => {
                 )}
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={6} py={3}>
               <Box display='flex' flexDirection='column' justifyContent='center' flexGrow={1}>
                 <Typography fontWeight='bold'>
                   Workflow Stages <span style={{ color: theme?.palette?.error?.main }}>*</span>

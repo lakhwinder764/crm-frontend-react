@@ -17,7 +17,7 @@ const WorkFlowList = () => {
         <TestListTable
           headingTitle='Workflows'
           subtitle='Workflow List'
-          initialColumns={['enrolment', 'submission', 'type', 'status', 'action']}
+          initialColumns={['general_services', 'total_partners', 'status', 'action']}
           tableData={data}
           addUserData={addTestData}
           deleteUserData={deleteTestData}
@@ -25,6 +25,7 @@ const WorkFlowList = () => {
           getCategories={getCategories}
           workFlow={true}
           title='Add New WorkFlow'
+          filterComponent={() => {}}
         />
       </Grid>
     </Grid>

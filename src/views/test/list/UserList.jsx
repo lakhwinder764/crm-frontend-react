@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid'
 import TestListTable from './TestListTable'
 import useTestApi from '@/api/test/useTestApi'
 import UserForm from '../form/UserFom'
+import TableFilters from './TableFilters'
 
 const UserList = () => {
   const { addTestData, updateTestData, deleteTestData, data, testData, viewTest, getCategories, categories } =
@@ -36,6 +37,7 @@ const UserList = () => {
           formComponent={UserForm}
           viewTest={viewTest}
           title='Add new User'
+          filterComponent={TableFilters}
         />
       </Grid>
     </Grid>

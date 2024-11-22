@@ -7,6 +7,8 @@ import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
+import { MdOutlineRadioButtonChecked } from 'react-icons/md'
+
 import * as Yup from 'yup'
 
 // MUI Imports
@@ -20,7 +22,7 @@ import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 
-import { styled } from '@mui/material/styles'
+import { styled, useTheme } from '@mui/material/styles'
 import TablePagination from '@mui/material/TablePagination'
 
 // Third-party Imports
@@ -52,8 +54,9 @@ import moment from 'moment'
 
 import { useFormik } from 'formik'
 
+import { GoDotFill } from 'react-icons/go'
+
 import TableFilters from './TableFilters'
-import AddTestDrawer from './AddTestDrawer'
 
 // Util Imports
 // import { getInitials } from '../../../../../../Utils/getInitials'
@@ -69,6 +72,7 @@ import useDraggableList from '@/components/globals/useDraggableList'
 import OptionMenu from '@/@core/components/option-menu'
 import AddUserDialogBox from '@/Components/Common/AddUserDialogBox'
 import TextEditor from '@/Components/Common/TextEditor'
+
 import CustomPhoneInput from '@/Components/Common/CustomPhoneInput'
 
 // import DialogBoxComponent from '@/Components/Common/DialogBoxComponent'
@@ -117,19 +121,25 @@ const userStatusObj = {
 // Column Definitions
 const columnHelper = createColumnHelper()
 
-const TestListTable = ({
+const ReactMuiTable = ({
   initialColumns,
   tableData,
   addUserData,
   deleteUserData,
   categories,
+  updateUserData,
+  viewTest,
   workFlow,
   title,
   headingTitle,
-  subtitle
+  subtitle,
+  formComponent: FormComponent
 }) => {
   // States
   const router = useRouter()
+  const theme = useTheme()
+  const [singleId, setSingleId] = useState(null)
+  const [mode, setMode] = useState('add')
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
   const [data, setData] = useState(...[tableData])
@@ -279,6 +289,25 @@ const TestListTable = ({
                   </div>
                 )
               })
+            case 'general_services':
+              return columnHelper.accessor('general_services', {
+                header: 'General Services',
+                cell: ({ row }) => (
+                  <div className='flex items-center gap-3'>
+                    <div className='flex flex-col'>
+                      <Typography color='text.primary' className='font-medium'>
+                        {row.original?.title}
+                      </Typography>
+                      {/* <Typography variant='body2'>{row.original.username}</Typography> */}
+                    </div>
+                  </div>
+                )
+              })
+            case 'total_partners':
+              return columnHelper.accessor('total_partners', {
+                header: 'Total Partners',
+                cell: ({ row }) => <Typography>2</Typography>
+              })
             case 'created_by':
               return columnHelper.accessor('created_by', {
                 header: 'Creator',
@@ -313,15 +342,32 @@ const TestListTable = ({
               return columnHelper.accessor('status', {
                 header: 'Status',
                 cell: ({ row }) => (
-                  <div className='flex items-center gap-3'>
-                    <Chip
-                      variant='tonal'
-                      label={row?.original?.status === '1' ? 'Published' : 'Unpublished'}
-                      size='small'
-                      color={userStatusObj?.[row?.original?.status === '1' ? 'Published' : 'Unpublished']}
-                      className='capitalize'
-                    />
-                  </div>
+                  <>
+                    {/* <div className='flex items-center gap-3'>
+                      <Chip
+                        variant='tonal'
+                        label={row?.original?.status === '1' ? 'Published' : 'Unpublished'}
+                        size='small'
+                        color={userStatusObj?.[row?.original?.status === '1' ? 'Published' : 'Unpublished']}
+                        className='capitalize'
+                      />
+                    </div> */}
+                    <Box display='flex' alignItems='center'>
+                      <GoDotFill
+                        style={{
+                          color: row?.original?.status === '1' ? theme.palette.success.main : theme.palette.error.main
+                        }}
+                      />
+                      <Typography
+                        sx={{
+                          color: theme =>
+                            row?.original?.status === '1' ? theme.palette.success.main : theme.palette.error.main
+                        }}
+                      >
+                        {row?.original?.status === '1' ? 'Active' : 'Inactive'}
+                      </Typography>
+                    </Box>
+                  </>
                 )
               })
             case 'action':
@@ -332,22 +378,49 @@ const TestListTable = ({
                     <OptionMenu
                       iconClassName='text-textSecondary'
                       data={row}
-                      options={[
-                        {
-                          text: 'View',
-                          icon: 'ri-eye-line',
-                          href: `/test/questions/?guid=${row?.original?.guid}`
-                        },
-                        {
-                          text: 'Edit',
-                          icon: 'ri-edit-box-line',
-                          href: workFlow ? '/settings/workflow/?mode=edit' : '/test/edit'
-                        },
-                        {
-                          text: 'Delete',
-                          icon: 'ri-delete-bin-7-line'
-                        }
-                      ]}
+                      options={
+                        row?.original?.status === '1'
+                          ? [
+                              {
+                                text: <Typography ml={2}>Edit</Typography>,
+                                icon: 'ri-edit-box-line',
+                                href: workFlow ? '/settings/workflow/?mode=edit' : null,
+                                setOpenModal: () => {
+                                  if (!workFlow) {
+                                    setMode('edit')
+                                    setSingleId(row?.original?.guid)
+                                    setAddUserOpen(true)
+                                  }
+                                }
+                              },
+                              {
+                                text: 'Deactivate',
+                                icon: (
+                                  <MdOutlineRadioButtonChecked
+                                    style={{
+                                      color: theme.palette.error.main
+                                    }}
+                                  />
+                                )
+                              }
+                            ]
+                          : [
+                              {
+                                text: 'Activate',
+                                icon: (
+                                  <MdOutlineRadioButtonChecked
+                                    style={{
+                                      color: theme.palette.success.main
+                                    }}
+                                  />
+                                )
+                              },
+                              {
+                                text: 'Delete',
+                                icon: 'ri-delete-bin-7-line'
+                              }
+                            ]
+                      }
                     />
                   </div>
                 ),
@@ -367,10 +440,11 @@ const TestListTable = ({
     filterFns: {
       fuzzy: fuzzyFilter
     },
-    state: {
-      rowSelection,
-      globalFilter
-    },
+    filterFns: 'fuzzy',
+
+    // state: {
+    //   globalFilter
+    // },
     initialState: {
       pagination: {
         pageSize: 10
@@ -413,7 +487,14 @@ const TestListTable = ({
           <Button
             fullWidth
             variant='contained'
-            onClick={() => (workFlow ? router.push('/settings/workflow/?mode=add') : setAddUserOpen(!addUserOpen))}
+            onClick={() =>
+              workFlow
+                ? router.push('/settings/workflow/?mode=add')
+                : (() => {
+                    setMode('add')
+                    setAddUserOpen(!addUserOpen)
+                  })()
+            }
             className='max-sm:is-full'
             startIcon={
               <i
@@ -442,94 +523,72 @@ const TestListTable = ({
             />
           </Grid>
         </Grid>
-        <Grid container item xs={12} pl={5}>
-          <Grid item xs={0.9}>
-            <Box display='flex' justifyContent='space-between' alignItems='center'>
-              <IconButton
-                disableRipple
-                disabled={!Object.keys(rowSelection)?.length}
-                sx={{
-                  border: `1px solid ${Object.keys(rowSelection)?.length ? '#808080' : '#E7E7E7'}`,
-                  borderRadius: 0
-                }}
-                onClick={() => setOpen(true)}
-              >
-                {/* <CustomTooltip title='Add' arrow> */}
-                <i
-                  class='ri-delete-bin-6-fill'
-                  color={Object.keys(rowSelection)?.length ? '#B5B8FA' : '#808080'}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    ...(Object.keys(rowSelection)?.length
-                      ? {
-                          color: '#B5B8FA'
-                        }
-                      : { color: '#808080' })
+        {!workFlow && (
+          <Grid container item xs={12} pl={5}>
+            <Grid item xs={0.9}>
+              <Box display='flex' justifyContent='space-between' alignItems='center'>
+                <IconButton
+                  disableRipple
+                  disabled={!Object.keys(rowSelection)?.length}
+                  sx={{
+                    border: `1px solid ${Object.keys(rowSelection)?.length ? '#808080' : '#E7E7E7'}`,
+                    borderRadius: 0
                   }}
-                ></i>
-                {/* </CustomTooltip> */}
-              </IconButton>
-              <IconButton
-                disableRipple
-                disabled={!Object.keys(rowSelection)?.length}
-                sx={{
-                  border: `1px solid ${Object.keys(rowSelection)?.length ? '#808080' : '#E7E7E7'}`,
-                  borderRadius: 0
-                }}
-                onClick={() => handleOpenStatusDialog('Published')}
-              >
-                <i
-                  class='ri-checkbox-circle-line'
-                  color={Object.keys(rowSelection)?.length ? '#B5B8FA' : '#808080'}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    ...(Object.keys(rowSelection)?.length
-                      ? {
-                          color: '#B5B8FA'
-                        }
-                      : { color: '#808080' })
+                  onClick={() => setOpen(true)}
+                >
+                  {/* <CustomTooltip title='Add' arrow> */}
+                  <i
+                    class='ri-delete-bin-6-fill'
+                    color={Object.keys(rowSelection)?.length ? '#B5B8FA' : '#808080'}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      ...(Object.keys(rowSelection)?.length
+                        ? {
+                            color: '#B5B8FA'
+                          }
+                        : { color: '#808080' })
+                    }}
+                  ></i>
+                  {/* </CustomTooltip> */}
+                </IconButton>
+                <IconButton
+                  disableRipple
+                  disabled={!Object.keys(rowSelection)?.length}
+                  sx={{
+                    border: `1px solid ${Object.keys(rowSelection)?.length ? '#808080' : '#E7E7E7'}`,
+                    borderRadius: 0
                   }}
-                ></i>
-              </IconButton>
-              {/* <TestOptionMenu
-                iconClassName='text-textSecondary'
-                // setEditFilterOpen={setEditFilterOpen}
-                // data={row}
-                // setEditData={setEditData}
-                rowSelection={rowSelection}
-                options={[
-                  {
-                    text: 'Test Name'
-                  },
-                  {
-                    text: 'Start Date'
-                  },
-                  {
-                    text: 'End Date'
-                  },
-                  {
-                    text: 'Type'
-                  },
-                  {
-                    text: 'Status'
-                  }
-                ]}
-              /> */}
-            </Box>
+                  onClick={() => handleOpenStatusDialog('Published')}
+                >
+                  <i
+                    class='ri-checkbox-circle-line'
+                    color={Object.keys(rowSelection)?.length ? '#B5B8FA' : '#808080'}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      ...(Object.keys(rowSelection)?.length
+                        ? {
+                            color: '#B5B8FA'
+                          }
+                        : { color: '#808080' })
+                    }}
+                  ></i>
+                </IconButton>
+              </Box>
+            </Grid>
+            <Grid
+              container
+              pr={8}
+              item
+              xs={11}
+              spacing={3}
+              display='flex'
+              alignItems='center'
+              justifyContent='flex-end'
+            ></Grid>
           </Grid>
-          <Grid
-            container
-            pr={8}
-            item
-            xs={11}
-            spacing={3}
-            display='flex'
-            alignItems='center'
-            justifyContent='flex-end'
-          ></Grid>
-        </Grid>
+        )}
         <div className='overflow-x-auto pt-5'>
           <table className={tableStyles.table}>
             <thead>
@@ -628,7 +687,7 @@ const TestListTable = ({
         cancelText='cancel'
         onConfirm={handleSaveStatus}
       >
-        <Grid container xs={12}>
+        {/* <Grid container xs={12}>
           <Grid item xs={6} px={2} py={1}>
             <FormControl fullWidth sx={{ mb: 6 }}>
               <InputLabel shrink id='title'>
@@ -691,7 +750,14 @@ const TestListTable = ({
               </Button>
             </Box>
           </Grid>
-        </Grid>
+        </Grid> */}
+        <FormComponent
+          mode={mode}
+          createData={addUserData}
+          updateData={updateUserData}
+          singleId={singleId}
+          viewData={viewTest}
+        />
       </AddUserDialogBox>
       <DialogBoxComponent
         open={openStatusDialog}
@@ -709,4 +775,4 @@ const TestListTable = ({
   )
 }
 
-export default TestListTable
+export default ReactMuiTable

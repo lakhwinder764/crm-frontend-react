@@ -9,6 +9,7 @@ import useTestApi from '@/api/test/useTestApi'
 import useClientsApi from '@/api/clients/useClientsApi'
 import ClientForm from '../form/ClientForm'
 import TestListTable from '@/views/test/list/TestListTable'
+import TableFilters from './TableFilters'
 
 const ClientList = () => {
   const { addClientsData, updateClientsData, deleteClientsData, clientsData, viewClientsData } = useClientsApi()
@@ -37,6 +38,7 @@ const ClientList = () => {
           formComponent={ClientForm}
           viewTest={viewClientsData}
           title='Add new Client'
+          filterComponent={TableFilters}
         />
       </Grid>
     </Grid>
